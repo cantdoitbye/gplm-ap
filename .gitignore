@@ -1,0 +1,105 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+.venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+
+# Database
+*.db
+*.sqlite3
+
+# Docker
+docker-compose.override.yml
+
+# MinIO / Object Storage Data
+minio-data/
+
+# Redis Data
+redis-data/
+
+# Postgres Data
+postgres-data/
+
+# ML Models (large files)
+*.pth
+*.pt
+*.h5
+*.pkl
+*.pickle
+models/*.pth
+models/*.pt
+
+# Satellite Imagery (large files)
+*.tif
+*.tiff
+*.jp2
+*.nc
+data/satellite/raw/
+data/satellite/processed/
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# Build outputs
+frontend/dist/
+frontend/build/
+frontend/node_modules/
+
+# Temporary files
+*.tmp
+*.temp
+tmp/
+temp/
