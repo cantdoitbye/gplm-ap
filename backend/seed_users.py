@@ -14,7 +14,7 @@ def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)
 
 async def main():
-    email = "abhishek.awasthi@ooumph.com"
+    email = "admin@ooumph.com"
     password = "admin123"
     username = email  # Fallback for older schema requirements
     
