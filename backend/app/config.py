@@ -7,7 +7,6 @@ All environment variables are loaded and validated here.
 
 from typing import List, Optional
 from pydantic_settings import BaseSettings
-from pydantic import field_validator
 
 
 class Settings(BaseSettings):
@@ -62,7 +61,17 @@ class Settings(BaseSettings):
 
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
-    CORS_ORIGINS: List[str] = ["http://localhost:3000", "http://localhost:5173"]
+    CORS_ORIGINS_STR: str = "*"
+
+    @property
+    def CORS_ORIGINS(self) -> List[str]:
+        v = self.CORS_ORIGINS_STR.strip()
+        if not v or v == "*":
+            return ["*"]
+        if v.startswith("["):
+            import json
+            return json.loads(v)
+        return [origin.strip().strip('"').strip("'") for origin in v.split(",")]
 
     JWT_SECRET_KEY: str = "your-super-secret-jwt-key-change-in-production"
     JWT_ALGORITHM: str = "HS256"
@@ -105,21 +114,12 @@ class Settings(BaseSettings):
     MEEBHOOMI_API_URL: str = "https://meebhoomi.ap.gov.in"
     MEEBHOOMI_API_KEY: Optional[str] = None
 
-    @field_validator("CORS_ORIGINS", mode="before")
-    @classmethod
-    def parse_cors_origins(cls, v):
-        if isinstance(v, str):
-            v = v.strip()
-            if v.startswith("["):
-                import json
-                return json.loads(v)
-            return [origin.strip().strip('"').strip("'") for origin in v.split(",")]
-        return v
-
-    class Config:
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        case_sensitive = True
+    model_config = {
+        "env_file": ".env",
+        "env_file_encoding": "utf-8",
+        "case_sensitive": True,
+        "env_parse_none_str": "",
+    }
 
 
 settings = Settings()
