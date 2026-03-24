@@ -16,7 +16,6 @@ def get_password_hash(password: str) -> str:
 async def main():
     email = "admin@ooumph.com"
     password = "admin123"
-    username = email  # Fallback for older schema requirements
     
     try:
         async with async_session_maker() as session:
@@ -27,16 +26,15 @@ async def main():
                 print(f"User '{email}' already exists!")
                 return
                 
-            print(f"Creating user '{email}' using raw SQL to bypass schema mismatch...")
+            print(f"Creating user '{email}'...")
             hashed_pwd = get_password_hash(password)
             
             insert_query = text("""
-                INSERT INTO users (username, email, hashed_password, full_name, role, is_active, created_at, updated_at)
-                VALUES (:username, :email, :hashed_password, :full_name, :role, :is_active, NOW(), NOW())
+                INSERT INTO users (email, hashed_password, full_name, role, is_active, created_at, updated_at)
+                VALUES (:email, :hashed_password, :full_name, :role, :is_active, NOW(), NOW())
             """)
             
             await session.execute(insert_query, {
-                "username": username,
                 "email": email,
                 "hashed_password": hashed_pwd,
                 "full_name": "Abhishek Awasthi",
