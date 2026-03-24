@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgis/postgis:15-3.3-alpine
+    container_name: gplm-ap-postgres
+    environment:
+      POSTGRES_USER: gplmap
+      POSTGRES_PASSWORD: gplmap_password
+      POSTGRES_DB: gplmap
+    ports:
+      - "0:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./infrastructure/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gplmap -d gplmap"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gplm-ap-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: gplm-ap-redis
+    ports:
+      - "0:6379"
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gplm-ap-network
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: gplm-ap-backend
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://gplmap:gplmap_password@postgres:5432/gplmap
+      - REDIS_URL=redis://redis:6379/0
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    ports:
+      - "0:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - gplm-ap-network
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    container_name: gplm-ap-frontend
+    ports:
+      - "0:80"
+    depends_on:
+      - backend
+    networks:
+      - gplm-ap-network
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  redis-data:
+
+networks:
+  gplm-ap-network:
+    driver: bridge
