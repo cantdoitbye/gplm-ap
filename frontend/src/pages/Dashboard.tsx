@@ -8,9 +8,7 @@ import {
   TrendingUp,
   TrendingDown,
   CheckCircle,
-  Eye,
   RefreshCw,
-  Plus,
 } from 'lucide-react'
 import { pdaApi, cdaApi } from '../lib/api'
 import type { Statistics, ChangeStatistics } from '../types'
