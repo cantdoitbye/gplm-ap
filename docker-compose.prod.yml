@@ -9,7 +9,7 @@ services:
       POSTGRES_PASSWORD: gplmap_password
       POSTGRES_DB: gplmap
     ports:
-      - "0:5432"
+      - "5433:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./infrastructure/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
@@ -52,7 +52,7 @@ services:
       - API_HOST=0.0.0.0
       - API_PORT=8000
     ports:
-      - "0:8000"
+      - "8001:8000"
     depends_on:
       postgres:
         condition: service_healthy
@@ -68,7 +68,7 @@ services:
       dockerfile: Dockerfile.prod
     container_name: gplm-ap-frontend
     ports:
-      - "0:80"
+      - "8080:80"
     depends_on:
       - backend
     networks:
